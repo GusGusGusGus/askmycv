@@ -1,6 +1,6 @@
 # AskMyCV App 
 
-## AI powered Job Board 🤖💼🚀🛠️
+## AI powered Job Board 🤖💼🚀🛠️ 
 
 ### Features: 
 - User profiles with Description, Looking For, Interests, Photo Gallery and Messages
