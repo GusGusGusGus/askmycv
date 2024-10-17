@@ -2,7 +2,7 @@
     cursor: pointer;
     position: relative;
     transition: background-color 0.3s ease-in-out;
-    
+    filter: brightness(1); /* Default brightness */
 }
 
 .fixed-size {
@@ -48,10 +48,26 @@
     left: 50%;
     transform: translate(-50%, -50%) scale(4);
     cursor: pointer;
-    color: black;
     padding: 5px;
     display: none; /* Initially hidden */
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+
+
+.card-img-wrapper:hover .img-thumbnail {
+    background-color: rgba(0, 0, 0, 0.3);
+    filter: brightness(0.5); /* Darken the image on hover */
+}
+
+.card-img-wrapper:hover .edit-icon {
+    display: block;
+    animation: fadeInUp 0.3s ease-in-out forwards;
+    color: white; /* Default to white */
+}
+
+.card-img-wrapper:hover .img-thumbnail[style*="brightness(0.5)"] ~ .edit-icon {
+    color: black; /* Change to black if the image is darkened */
 }
 
 @keyframes fadeInUp {
