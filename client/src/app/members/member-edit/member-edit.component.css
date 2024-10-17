@@ -1,7 +1,14 @@
 .img-thumbnail {
-    margin: 25px;
-    width: 85%;
-    height: 85%;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease-in-out;
+    
+}
+
+.fixed-size {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
 }
 
 .card-body {
@@ -14,4 +21,58 @@
     border-top: none;
 }
 
+.card-img-wrapper {
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
 
+    &:hover .edit-icon {
+        display: block;
+        animation: fadeInUp 0.3s ease-in-out forwards;
+        /* opacity: 0.5;  */
+        /* transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; */
+    }
+    &:hover .img-thumbnail{
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+   
+}
+
+.edit-icon {
+    opacity: 0; /* Initially hidden */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(4);
+    cursor: pointer;
+    color: black;
+    padding: 5px;
+    display: none; /* Initially hidden */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 20%); /* Start from below */
+    }
+    100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(4); /* End at the center */
+    }
+}
+
+@keyframes fadeOutDown {
+    0% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(4); /* Start at the center */
+
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 20%); /* End below */
+    }
+}

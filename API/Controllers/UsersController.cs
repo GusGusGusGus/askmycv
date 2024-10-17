@@ -109,12 +109,22 @@ namespace API.Controllers
                 PublicId = result.PublicId
             };
 
-            if (user.Photos.Count == 0)
-            { 
-                photo.IsMain = true;
-            }
+            // if (user.Photos.Count == 0)
+            // { 
+            //     photo.IsMain = true;
+            // }
+
+            //new logic to account for only one profile photo, change this if multiple photos are uploaded ----------starts here
+
+            var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
+
+            if (currentMain != null) currentMain.IsMain = false;
+
+            photo.IsMain = true;
 
             user.Photos.Add(photo);
+
+            //--------------ends here
 
             if (await _unitOfWork.Complete())
             {

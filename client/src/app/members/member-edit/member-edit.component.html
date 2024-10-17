@@ -9,8 +9,11 @@
     </div>
     <div class="col-4">
         <div class="card">
-            <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}" 
-                class="card-img-top img-thumbnail">
+            <div class="card-img-wrapper" (click)="editProfileImage($event)">
+                <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}" 
+                    class="card-img-top img-thumbnail fixed-size">
+                <i class="fa fa-pencil fa-lg edit-icon"></i>
+            </div>
             <div class="card-body">
                 <div>
                     <strong>Location:</strong>

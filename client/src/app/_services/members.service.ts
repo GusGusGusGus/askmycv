@@ -89,6 +89,24 @@ export class MembersService {
     );
   }
 
+  upsertPhoto(photo: File) {
+    const formData = new FormData();
+    formData.append('file', photo, photo.name);
+
+    return this.http.post(this.baseUrl + 'users/add-photo/', formData).pipe(
+      map((response: any) => {
+        const photo = response;
+        if (photo) {
+          const index = this.members.findIndex(m => m.username === this.user.username);
+          if (index !== -1) {
+            this.members[index].photos.push(photo);
+          }
+        }
+        return photo;
+      })
+    );
+  }
+
   setMainPhoto(photoId: number){
     return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
   }

@@ -43,7 +43,7 @@ export class MemberEditComponent {
   ngOnInit(): void {
     this.loadMember();
   }
-
+  
   loadMember() {
     this.memberService.getMember(this.user.username).subscribe(member => {
       this.member = member;
@@ -55,7 +55,33 @@ export class MemberEditComponent {
     this.memberService.updateMember(this.member).subscribe(() => {
       this.toastr.success('Profile updated successfully');
       this.editForm.reset(this.member);
+
     })
+  }
+
+  editProfileImage($event: any) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+        
+          this.memberService.upsertPhoto(file).subscribe((response: any) => {
+          const photoUrl = response.url;
+          this.member.photoUrl = photoUrl;
+          this.user.photoUrl = photoUrl;
+          this.accountService.setCurrentUser(this.user);
+          this.updateMember();
+          });
+          
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   }
 
 }
