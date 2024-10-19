@@ -1,0 +1,134 @@
+//CV Upload
+/* .file-uploader {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    width: 100%;
+    max-width: 400px;
+    background-color: grey;
+    margin: 20px auto;
+    height: 500px;
+    box-sizing: border-box;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+} */
+
+.file-uploader:hover {
+    border-color: #aaa;
+    background-color: #d3d3d3; /* Default to a lighter grey */
+}
+
+.file-uploader.dragover {
+    border-color: #000;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-upload-text {
+    display: block;
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: grey;
+
+}
+
+i {
+    display: none;
+    font-size: 3em;
+    color: grey;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.file-upload-info {
+    display: block;
+    font-weight: bold;
+    color: grey;
+    font-size: 1em;
+    top: 80%;
+    margin-bottom: 20px;
+}
+
+.upload-btn {
+    margin-top: 10px;
+}
+
+.file-uploader:hover .fa-paperclip {
+    display: block;
+    animation: fadeInUp 0.3s ease-in-out forwards;
+    color: white; /* Default to white */
+}
+
+.file-uploader:hover .fa-paperclip[style*="brightness(0.5)"] ~ .fa-paperclip {
+    color: black; /* Change to black if the image is darkened */
+}
+
+.file-uploader:hover .file-upload-text, 
+.file-uploader:hover .file-upload-info {
+    top: 50%;
+    color: #000; /* Change text color on hover */
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0%); /* Start from below */
+    }
+    100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(4); /* End at the center */
+    }
+}
+
+@keyframes fadeOutDown {
+    0% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(4); /* Start at the center */
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 0%); /* End below */
+    }
+}
+
+
+
+div.file-uploader.dragover {
+    border-color: #000 !important;
+} 
+
+
+.file-input {
+    display: none !important; 
+}
+
+.upload-btn {
+    margin-top: 10px !important;
+}

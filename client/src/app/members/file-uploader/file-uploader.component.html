@@ -1,0 +1,28 @@
+<div class="file-uploader" 
+    (dragover)="onDragOver($event)"     
+    (dragleave)="onDragLeave($event)" 
+    (drop)="onDrop($event)"
+    (click)="fileUpload.click()"
+    style="
+    border: 6px dashed #000 !important;
+    border-radius: 20px;
+    padding: 40px !important;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    width: 100% !important;
+    max-width: 600px !important;
+    background-color: lightgrey;
+    margin: 20px auto;
+    height: 600px;
+    box-sizing: border-box; 
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;">
+    <input type="file" class="file-input" 
+    (change)="onFileSelected($event)" #fileUpload hidden>
+    <i class="fa fa-paperclip fa-4x" aria-hidden="true"></i>
+    <span  class="file-upload-text">{{fileName || "Upload my CV"}}</span>
+    <span class="file-upload-info">Accepted file types: .pdf, .png, .webp, .txt, .docx, etc...</span>
+    <span class="file-upload-info">Max size: 20MB</span>
+</div>

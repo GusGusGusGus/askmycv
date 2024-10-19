@@ -34,6 +34,7 @@ import { RolesModalComponent } from './modals/roles-modal/roles-modal.component'
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ResetPasswordModalComponent } from './modals/reset-password-modal/reset-password-modal.component';
 import { TimelineComponent } from './timeline/timeline.component';
+import { FileUploaderComponent } from "./members/file-uploader/file-uploader.component";
 
 //DetailsComponent is now a standalone component, so it isn't present in the declarations array of the AppModule anymore. 
 @NgModule({ declarations: [
@@ -59,16 +60,18 @@ import { TimelineComponent } from './timeline/timeline.component';
         RolesModalComponent,
         ResetPasswordComponent,
         ResetPasswordModalComponent,
-        TimelineComponent
+        TimelineComponent,
+        FileUploaderComponent
     ],
     bootstrap: [AppComponent], imports: [
-        BrowserModule,
-        AppRoutingModule,
-        NgbModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BrowserAnimationsModule,
-        SharedModule], providers: [
+    BrowserModule,
+    AppRoutingModule,
+    NgbModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    SharedModule
+], providers: [
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },

@@ -1,11 +1,12 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostListener, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 import { Member } from 'src/app/_models/member';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { FilesService } from 'src/app/_services/files.service';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -29,13 +30,16 @@ export class MemberEditComponent {
   @ViewChild('editForm') editForm: NgForm;
   member: Member;
   user: User;
+  fileName: string;
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm.dirty) {
       $event.returnValue = true;
     }
   }
 
-  constructor(private accountService: AccountService, private memberService: MembersService, 
+  constructor(
+    private accountService: AccountService, 
+    private memberService: MembersService, 
     private toastr: ToastrService) { 
       this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.user = user);
   }
@@ -83,5 +87,16 @@ export class MemberEditComponent {
     };
     input.click();
   }
+
+
+
+  onImageLoad(event: Event) {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.style.width = '100%';
+    imgElement.style.height = '100%';
+    imgElement.style.objectFit = 'cover';
+  }
+
+  
 
 }
