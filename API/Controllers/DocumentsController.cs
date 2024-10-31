@@ -95,10 +95,16 @@ namespace API.Controllers
 
             // Get content type based on the file extension (you can add more cases as needed)
             var contentType = fileName.EndsWith(".pdf") ? "application/pdf" :
-                            fileName.EndsWith(".jpeg") ? "image/jpeg" :
+                            fileName.EndsWith(".jpeg") || fileName.EndsWith(".jpg") ? "image/jpeg" :
                             fileName.EndsWith(".png") ? "image/png" :
                             fileName.EndsWith(".docx") ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" :
-                            fileName.EndsWith(".webp") ? "image/webp" : "application/octet-stream";
+                            fileName.EndsWith(".webp") ? "image/webp" :
+                            fileName.EndsWith(".doc") ? "application/msword" :
+                            fileName.EndsWith(".txt") ? "text/plain" :
+                            fileName.EndsWith(".rtf") ? "application/rtf" :
+                            fileName.EndsWith(".xlsx") ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
+                            fileName.EndsWith(".pptx") ? "application/vnd.openxmlformats-officedocument.presentationml.presentation" :
+                            "application/octet-stream";
 
             return File(fileStream, contentType, fileName);
         }
@@ -144,9 +150,15 @@ namespace API.Controllers
             var allowedContentTypes = new[] { 
                 "application/pdf", 
                 "image/jpeg", 
+                "image/jpg", 
                 "image/png", 
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
-                "image/webp" 
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+                "image/webp",
+                "application/msword", // .doc
+                "text/plain", // .txt
+                "application/rtf", // .rtf
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
             };
 
             if (!allowedContentTypes.Contains(file.ContentType))
