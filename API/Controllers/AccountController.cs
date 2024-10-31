@@ -250,12 +250,18 @@ namespace API.Controllers
             {
                 user = await _userManager.Users
                 .Include(p => p.Photos)
+                .Include(x => x.Documents)
+                .Include(x => x.Employments)
+                .Include(x => x.Education)
+                .Include(x => x.SideProjects)
+                .Include(x => x.Socials)
                 .SingleOrDefaultAsync(x => x.Email == loginDto.Email.ToLower());
             }
             else 
             {
                 user = await _userManager.Users
                 .Include(p => p.Photos)
+                .Include(x => x.Documents)
                 .SingleOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
             }
             
@@ -287,7 +293,8 @@ namespace API.Controllers
                 Gender = user.Gender,
                 Token = await _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
-                Email = user.Email
+                Email = user.Email,
+                
             };
         }
 

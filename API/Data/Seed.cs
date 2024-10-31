@@ -50,8 +50,9 @@ namespace API.Data
             var admin = new AppUser
             {
                 UserName = "admin",
-                City = "New York",
-                Country = "USA",
+                CountryOfResidency = "USA",
+                CityOfResidency = "New York",
+                Locations = "New York, USA, Los Angeles, USA",
                 DateOfBirth = new DateTime(1984, 03, 15),
                 KnownAs = "Admin",
                 Gender = "male"

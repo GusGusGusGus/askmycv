@@ -8,8 +8,11 @@ using API.Extensions;
 using API.Helpers;
 using API.Intefaces;
 using AutoMapper;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenAI.Threads;
+using Message = API.Entities.Message;
 
 namespace API.Controllers
 {
@@ -17,12 +20,16 @@ namespace API.Controllers
     public class MessagesController : BaseApiController
     {
         private readonly IMapper _mapper;
+        private readonly ILLMService _llmService;
         private readonly IUnitOfWork _unitOfWork;
-        public MessagesController(IUnitOfWork unitOfWork, IMapper mapper)
+        public MessagesController(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper,
+            ILLMService llmService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-
+            _llmService = llmService;
         }
 
         [HttpPost]
@@ -35,6 +42,13 @@ namespace API.Controllers
             var sender = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
             var recipient = await _unitOfWork.UserRepository.GetUserByUsernameAsync(createMessageDTO.RecipientUsername);
             if (recipient == null) return NotFound();
+
+            if (createMessageDTO.IsAutopilot)
+            {   
+                var userId = User.GetUserId();
+                // await _llmService.RouteRequestAsync(sender, recipient, createMessageDTO.Content);
+
+            }
 
             var message = new Message
             {
@@ -92,6 +106,13 @@ namespace API.Controllers
             if (await _unitOfWork.Complete()) return Ok();
 
             return BadRequest("Problem deleting the message");
+        }
+
+        [HttpPost("testllm")]
+        public async Task<ActionResult> TestLLM(CreateMessageDTO createMessageDTO)
+        {
+            var response = await _llmService.RagAsync(createMessageDTO.Content);
+            return Ok($"LLM answer: {response}");
         }
     }
 }

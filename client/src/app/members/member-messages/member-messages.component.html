@@ -32,6 +32,10 @@
         </ul>
     </div>
     <div class="card-footer">
+        <div class="form-group">
+            <label for="autoPilot">Auto Pilot</label>
+            <input type="checkbox" id="autoPilot" [(ngModel)]="isAutoPilot" name="autoPilot"> {{isAutoPilot ? 'ON' : 'OFF'}}
+        </div>
         <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
             <div class="input-group">
                 <input 

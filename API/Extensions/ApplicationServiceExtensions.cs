@@ -8,6 +8,8 @@ using API.Helpers;
 using API.Intefaces;
 using API.Services;
 using API.SignalR;
+using API.Tasks;
+using API.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions
@@ -16,10 +18,16 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            // //populates the location data
+            // var locations = JsonLoader.LoadLocationsFromJson("Data\\locations.json"); 
+            // services.AddSingleton(locations);
+
             services.AddSingleton<PresenceTracker>();
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPhotoService, PhotoService>();
+
+            services.AddScoped<ILLMService, LLMService>();
             services.Configure<BlobStorageOptions>(config.GetSection("AzureBlobStorage"));
             services.AddSingleton<IBlobStorageService, BlobStorageService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -61,6 +69,7 @@ namespace API.Extensions
                 // or from the environment variable from Heroku, use it to set up your DbContext.
                 options.UseNpgsql(connStr);
             });
+
             return services;
         }
     }

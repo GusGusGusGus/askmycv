@@ -8,6 +8,7 @@ export interface Message {
     recipientPhotoUrl: string
     content: string
     dateRead?: Date
-    messageSent: Date
+    messageSent: Date,
+    isAutoPilot: boolean
   }
   

@@ -14,6 +14,7 @@ namespace API.Services
     public class EmailSender : IEmailSender
     {
         private readonly ILogger _logger;
+        private AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
 
         public EmailSender(
             IOptions<AuthMessageSenderOptions> optionsAccessor,
@@ -23,7 +24,6 @@ namespace API.Services
             _logger = logger;
         }
 
-        public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {

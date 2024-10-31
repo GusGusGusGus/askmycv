@@ -482,4 +482,7 @@ AskMyCV.db
 *.db-wal
 
 *.dockerfile
-compose.yaml
+docker-compose.yaml
+
+#environment vars from python
+.env

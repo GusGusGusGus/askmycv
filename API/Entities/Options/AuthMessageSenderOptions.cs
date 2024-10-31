@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace API.Entities
 {
-    public class AuthMessageSenderOptions
+    public sealed class AuthMessageSenderOptions
     {
          public string SendGridKey { get; set; }
          public string SupportEmail { get; set; }

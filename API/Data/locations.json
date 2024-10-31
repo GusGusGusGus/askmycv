@@ -1,0 +1,20 @@
+[
+    {
+        "Id": 1,
+        "City": "New York",
+        "Country": "United States",
+        "TimeZoneIANA": "America/New_York"
+    },
+    {
+        "Id": 2,
+        "City": "Los Angeles",
+        "Country": "United States",
+        "TimeZoneIANA": "America/Los_Angeles"
+    },
+    {
+        "Id": 3,
+        "City": "Chicago",
+        "Country": "United States",
+        "TimeZoneIANA": "America/Chicago"
+    }
+]

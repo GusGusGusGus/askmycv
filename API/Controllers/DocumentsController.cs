@@ -46,12 +46,19 @@ namespace API.Controllers
             }
 
             // Supported content types
+ 
             var allowedContentTypes = new[] { 
                 "application/pdf", 
                 "image/jpeg", 
+                "image/jpg", 
                 "image/png", 
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
-                "image/webp" 
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+                "image/webp",
+                "application/msword", // .doc
+                "text/plain", // .txt
+                "application/rtf", // .rtf
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
             };
 
             if (!allowedContentTypes.Contains(file.ContentType))

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace API.Entities
 {
-    public class ApplicationOptions
+    public sealed class ApplicationOptions
     {
         public string BaseUrl { get; set; }
     }

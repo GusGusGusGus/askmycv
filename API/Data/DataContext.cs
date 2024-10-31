@@ -25,6 +25,20 @@ namespace API.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<Connection> Connections { get; set; }
         public DbSet<Document> Documents { get; set; }
+        public DbSet<JobPost> JobPosts { get; set; }
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<Benefit> Benefits { get; set; }
+        public DbSet<Language> Languages { get; set; }
+        public DbSet<Badge> Badges { get; set; }
+
+
+        public DbSet<JobPostSkill> JobPostSkills { get; set; }
+        public DbSet<JobPostLanguage> JobPostLanguages { get; set; }
+        public DbSet<JobPostBenefit> JobPostBenefits { get; set; }
+
+        public DbSet<UserSkill> UserSkills { get; set; }
+        public DbSet<UserLanguage> UserLanguages { get; set; }
+        public DbSet<UserPreferedBenefit> UserPreferedBenefits { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
