@@ -3,10 +3,9 @@ using API.Intefaces;
 using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
 using LangChain.Extensions;
+using LangChain.Providers;
 using LangChain.Providers.Ollama;
 using Microsoft.Extensions.Options;
-using Ollama;
-
 
 namespace API.Services
 {
@@ -37,9 +36,7 @@ namespace API.Services
 
             var vectorDatabase = new SqLiteVectorDatabase(dataSource: "vectors.db");
 
-            var collection = await vectorDatabase.CreateCollectionAsync("testCollection", 1536);
-
-            var vectorCollection = await vectorDatabase.CreateCollectionAsync <PdfPigPdfLoader>(
+            var vectorCollection = await vectorDatabase.AddDocumentsFromAsync<PdfPigPdfLoader>(
                 embeddingModel, // Used to convert text to embeddings
                 dimensions: 384, // Should be 384 for all-minilm
                 dataSource: DataSource.FromUrl("https://canonburyprimaryschool.co.uk/wp-content/uploads/2016/01/Joanne-K.-Rowling-Harry-Potter-Book-1-Harry-Potter-and-the-Philosophers-Stone-EnglishOnlineClub.com_.pdf"),
@@ -64,7 +61,6 @@ namespace API.Services
                 """);
 
             return answer;
-            throw new NotImplementedException();
         }
 
 
