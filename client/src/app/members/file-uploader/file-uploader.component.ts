@@ -9,6 +9,7 @@ import { FilesService } from 'src/app/_services/files.service';
 })
 export class FileUploaderComponent {
   fileName: string;
+  isCV: boolean;
 
   constructor(private filesService: FilesService,
     private toastr: ToastrService
@@ -26,11 +27,12 @@ export class FileUploaderComponent {
     }
   }
 
+  //IMPORTANT: to do, enable multiple file upload. for now, the file will be assumed to be CV
   handleFileUpload(file: File) {
     debugger;
 
      // Handle file upload logic
-     this.filesService.uploadFile(file).subscribe({
+     this.filesService.uploadFile(file, true).subscribe({
       next: () => {
         this.toastr.success('File uploaded successfully');
       },

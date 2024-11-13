@@ -1,17 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using API.DTOs;
-using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Intefaces;
 using AutoMapper;
-using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OpenAI.Threads;
 using Message = API.Entities.Message;
 
 namespace API.Controllers
@@ -111,7 +104,7 @@ namespace API.Controllers
         [HttpPost("testllm")]
         public async Task<ActionResult> TestLLM(CreateMessageDTO createMessageDTO)
         {
-            var response = await _llmService.RagAsync(createMessageDTO.Content);
+            var response = await _llmService.CorrectiveRagAsync(createMessageDTO.Content);
             return Ok($"LLM answer: {response}");
         }
     }

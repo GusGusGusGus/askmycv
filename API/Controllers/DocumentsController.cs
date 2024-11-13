@@ -22,7 +22,7 @@ namespace API.Controllers
 
         // Endpoint to upload CV files (PDF, JPEG, DOCX, WebP, etc.)
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, bool isCV)
         {
             if (file == null || file.Length == 0)
             {
@@ -69,7 +69,9 @@ namespace API.Controllers
             using (var stream = file.OpenReadStream())
             {
                 // Save file under the user's folder in Azure Blob Storage
-                var fileUrl = await _blobStorageService.UploadFileAsync(stream, file.FileName, userId, file.ContentType);
+                var fileUrl = await _blobStorageService.UploadFileAsync(stream, file.FileName, userId, file.ContentType, isCV);
+
+                
                 return Ok(new { Url = fileUrl });
             }
         }

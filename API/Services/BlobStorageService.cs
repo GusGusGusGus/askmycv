@@ -24,12 +24,21 @@ namespace API.Services
         }
 
         // Upload different types of files (PDF, JPEG, DOCX, etc.)
-        public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string userId, string contentType)
+        public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string userId, string contentType, bool isCV)
         {
+            string userSpecificFileName;
             try
             {
                 var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-                string userSpecificFileName = $"{userId}/{fileName}"; // Storing by user folder
+                if (isCV)
+                {
+                    userSpecificFileName = $"{userId}/CV"; // Storing by user folder
+                }
+                else
+                {
+                    
+                    userSpecificFileName = $"{userId}/{fileName}"; // Storing by user folder
+                }
 
                 var blobClient = blobContainerClient.GetBlobClient(userSpecificFileName);
                 await blobClient.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = contentType });

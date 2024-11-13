@@ -11,6 +11,7 @@ using API.SignalR;
 using API.Tasks;
 using API.Utils;
 using Microsoft.EntityFrameworkCore;
+using LangChain.Extensions.DependencyInjection;
 
 namespace API.Extensions
 {
@@ -28,8 +29,9 @@ namespace API.Extensions
             services.AddScoped<IPhotoService, PhotoService>();
 
             services.AddScoped<ILLMService, LLMService>();
+            services.AddScoped<IIngestionService, IngestionService>();
             services.Configure<BlobStorageOptions>(config.GetSection("AzureBlobStorage"));
-            services.AddSingleton<IBlobStorageService, BlobStorageService>();
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);

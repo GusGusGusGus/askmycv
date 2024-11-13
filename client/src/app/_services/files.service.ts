@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -12,11 +12,12 @@ export class FilesService {
   constructor(private http: HttpClient) {}
 
   // Upload a file
-  uploadFile(file: File): Observable<any> {
+  uploadFile(file: File, isCV: boolean): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
+    const params = new HttpParams().set('isCV', isCV.toString());
 
-    return this.http.post(`${this.apiUrl}/upload`, formData);
+    return this.http.post(`${this.apiUrl}/upload`, formData, {params});
   }
 
   // Download a file by name

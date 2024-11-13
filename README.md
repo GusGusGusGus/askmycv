@@ -26,7 +26,7 @@
 ### Client: 
 *Angular 18* 🅰️
 ### Server: 
-*.Net 7* #️⃣
+*.Net 8* #️⃣
 ### ORM: 
 *Entity Framework Core* 🦄
 ### DB: 

@@ -11,5 +11,6 @@ namespace API.Intefaces
     public interface ILLMService
     {
         Task<string> RagAsync(string question);
+        Task<string> CorrectiveRagAsync(string query);
     }
 }
