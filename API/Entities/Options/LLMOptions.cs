@@ -10,6 +10,7 @@ namespace API.Entities
         public string LlamaKey { get; set; } = String.Empty;
         public string OpenAIKey { get; set; } = String.Empty;
         public string MistralKey { get; set; } = String.Empty;
+        public string AnthropicKey { get; set; } = String.Empty;
         public string PineconeAPIKey { get; set; } = String.Empty;
         public string PineconeEnvironment { get; set; } = String.Empty;
         public string PineconeCloud { get; set; } = String.Empty;

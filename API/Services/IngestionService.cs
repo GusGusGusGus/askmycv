@@ -9,24 +9,46 @@ using LangChain.DocumentLoaders;
 using LangChain.Extensions;
 using LangChain.Providers;
 using LangChain.Providers.Ollama;
+using LangChain.Providers.OpenAI;
+using LangChain.Providers.OpenAI.Predefined;
+using Microsoft.Extensions.Options;
 using Document = LangChain.DocumentLoaders.Document;
 
 namespace API.Services
 {
     public class IngestionService : IIngestionService
     {
-        private BlobStorageService _blobStorageService;
-        private OllamaEmbeddingModel _embeddingModel;
-        private OllamaChatModel _llm;
-        private SqLiteVectorDatabase _vectorDatabase;
-        private OllamaProvider _provider;
+        private IBlobStorageService _blobStorageService;
+        private readonly LLMOptions _llmOptions;
 
-        public IngestionService(BlobStorageService blobStorageService, OllamaProvider provider)
+
+        //OLLAMA Model
+        private OllamaEmbeddingModel _embeddingModel;
+        private OllamaProvider _ollamaProvider;
+        // private OllamaChatModel _llm;
+
+        //OPENAI Model
+        //IF USING ANOTHER MODEL, assign specific chatmodel type
+        private OpenAiLatestFastChatModel _llm;
+        private OpenAiProvider _openAiProvider;
+        private TextEmbeddingV3SmallModel _v3EmbeddingModel;
+
+        private SqLiteVectorDatabase _vectorDatabase;
+
+        public IngestionService(
+            IOptions<LLMOptions> optionsAccessor, 
+            IBlobStorageService blobStorageService, 
+            OllamaProvider ollamaProvider)
         {
-            _blobStorageService = blobStorageService;
-            _embeddingModel = new OllamaEmbeddingModel(provider, id: "all-minilm");
-            _provider = provider;
-            _llm = new OllamaChatModel(provider, id: "llama3");
+            _llmOptions = optionsAccessor.Value;
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+            // _embeddingModel = new OllamaEmbeddingModel(ollamaProvider, id: "all-minilm");
+            // _ollamaProvider = ollamaProvider;
+            // _llm = new OllamaChatModel(ollamaProvider, id: "llama3");
+            _openAiProvider = new OpenAiProvider(_llmOptions.OpenAIKey ?? throw new Exception("OPENAI_API_KEY is not set"));
+            _v3EmbeddingModel = new TextEmbeddingV3SmallModel(_openAiProvider);
+            _llm = new OpenAiLatestFastChatModel(_openAiProvider);
+
             _vectorDatabase = new SqLiteVectorDatabase(dataSource: "vectors.db");
         }
 
@@ -145,11 +167,11 @@ namespace API.Services
 
         private async Task AddChunksToVectorDatabase(List<Chunk> chunks, string collectionName)
         {
-            var vectorCollection = await _vectorDatabase.GetOrCreateCollectionAsync(collectionName, dimensions: 384);
+            var vectorCollection = await _vectorDatabase.GetOrCreateCollectionAsync(collectionName, dimensions: 1536);
 
             foreach (var chunk in chunks)
             {
-                var embedding = await _embeddingModel.CreateEmbeddingsAsync(chunk.Text);
+                // var embedding = await _embeddingModel.CreateEmbeddingsAsync(chunk.Text);
                 var documents = new List<Document>
                 {
                     new Document(

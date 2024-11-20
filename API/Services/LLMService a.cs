@@ -1,11 +1,17 @@
+using System.Reflection;
 using API.Entities;
 using API.Intefaces;
+using Azure.AI.OpenAI;
 using LangChain.Databases.Sqlite;
 using LangChain.DocumentLoaders;
 using LangChain.Extensions;
 using LangChain.Providers;
+using LangChain.Providers.Anthropic;
 using LangChain.Providers.Ollama;
+using LangChain.Providers.OpenAI;
+using LangChain.Providers.OpenAI.Predefined;
 using Microsoft.Extensions.Options;
+using OllamaSharp.Models.Chat;
 
 namespace API.Services
 {
@@ -14,36 +20,58 @@ namespace API.Services
         private bool isFirstRun;
         private AppUser _sender;
         private AppUser _receiver;
-        private LLMOptions Options { get; }
-        private OllamaProvider _provider;
-        private OllamaEmbeddingModel _embeddingModel;
-        private OllamaChatModel _llm;
+        private readonly LLMOptions _llmOptions;
+
+        // Ollama Model
+        private OllamaProvider _ollamaProvider;
+        private OllamaEmbeddingModel _ollamaEmbeddingModel;
+        // private OllamaChatModel _llm;
+
+
+        //OpenAi Model
+        //IF USING ANOTHER MODEL, assign specific chatmodel type
+        private OpenAiChatModel _llm;
+        private OpenAiProvider _openAiProvider;
+        private TextEmbeddingV3SmallModel _v3EmbeddingModel;
+
+        //Anthropic Claude Model
+        private AnthropicProvider _anthropicProvider;
+        //Note: embeddings for claude should be the same as for openai
+
         private SqLiteVectorDatabase _vectorDatabase;
-        private IngestionService _ingestionService;
+        private IIngestionService _ingestionService;
 
 
-        public LLMService(IOptions<LLMOptions> optionsAccessor, OllamaProvider provider, IngestionService ingestionService)
+        public LLMService(
+            IOptions<LLMOptions> optionsAccessor, 
+            // OllamaProvider ollamaProvider,
+            // AnthropicProvider anthropicProvider,
+            IIngestionService ingestionService)
         {
-            Options = optionsAccessor.Value;
-            _provider = provider;
-            _embeddingModel = new OllamaEmbeddingModel(provider, id: "all-minilm");
-            _llm = new OllamaChatModel(provider, id: "llama3");
+            _llmOptions = optionsAccessor.Value;
+            ////Uncomment for OLLAMA, refactor _llm type and embedding model
+            // _ollamaProvider = ollamaProvider ?? throw new ArgumentNullException(nameof(ollamaProvider));
+            // _ollamaEmbeddingModel = new OllamaEmbeddingModel(_ollamaProvider, id: "all-minilm");
+            // _llm = new OllamaChatModel(_ollamaProvider, id: "llama3");
+            _openAiProvider = new OpenAiProvider(_llmOptions.OpenAIKey ?? throw new Exception("OPENAI_API_KEY is not set"));
+            _v3EmbeddingModel = new TextEmbeddingV3SmallModel(_openAiProvider);
+            _llm = new OpenAiLatestFastChatModel(_openAiProvider);
+
+
             _vectorDatabase = new SqLiteVectorDatabase(dataSource: "vectors.db");
-            _ingestionService = ingestionService;
+            _ingestionService = ingestionService ?? throw new ArgumentNullException(nameof(ingestionService));
         }
 
 
         public async Task<string> RagAsync(string query)
         {
-            var provider = new OllamaProvider();
-            var embeddingModel = new OllamaEmbeddingModel(provider, id: "all-minilm");
-            var llm = new OllamaChatModel(provider, id: "llama3");
+
 
             var vectorDatabase = new SqLiteVectorDatabase(dataSource: "vectors.db");
 
             var vectorCollection = await vectorDatabase.AddDocumentsFromAsync<PdfPigPdfLoader>(
-                embeddingModel, // Used to convert text to embeddings
-                dimensions: 384, // Should be 384 for all-minilm
+                _v3EmbeddingModel, // Used to convert text to embeddings
+                dimensions: 1536, // Should be 384 for all-minilm, Should be 1536 for TextEmbeddingV3SmallModel
                 dataSource: DataSource.FromUrl("https://canonburyprimaryschool.co.uk/wp-content/uploads/2016/01/Joanne-K.-Rowling-Harry-Potter-Book-1-Harry-Potter-and-the-Philosophers-Stone-EnglishOnlineClub.com_.pdf"),
                 collectionName: "harrypotter", // Can be omitted, use if you want to have multiple collections
                 textSplitter: null,
@@ -51,9 +79,9 @@ namespace API.Services
 
 
 
-            var similarDocuments = await vectorCollection.GetSimilarDocuments(embeddingModel, query, amount: 5);
+            var similarDocuments = await vectorCollection.GetSimilarDocuments(_v3EmbeddingModel, query, amount: 5);
             // Use similar documents and LLM to answer the question
-            var answer = await llm.GenerateAsync(
+            var answer = await _llm.GenerateAsync(
                 $"""
                 Use the following pieces of context to answer the question at the end.
                 If the answer is not in context then just say that you don't know, don't try to make up an answer.
@@ -84,6 +112,8 @@ namespace API.Services
                 {
                     // Step 3: Query the Vector Database
                     var similarDocuments = await QueryVectorDatabase(optimizedQuery, state);
+                    if (similarDocuments == null)
+                        return "No documents were found";
 
                     // Step 4: Grade Relevance of Results
                     var isRelevant = await GradeRelevance(optimizedQuery, similarDocuments);
@@ -159,7 +189,9 @@ namespace API.Services
             Please rewrite the question if needed, or respond with "No Change" if it is already optimal.
             """;
 
-            var rewriteResponse = await _llm.GenerateAsync(rewritePrompt);
+
+
+            var rewriteResponse = await _llm.GenerateAsync(rewritePrompt, new OpenAiChatSettings() );
 
             return rewriteResponse.LastMessageContent.Trim().Equals("No Change", StringComparison.OrdinalIgnoreCase)
                 ? query
@@ -184,19 +216,23 @@ namespace API.Services
         private async Task<IReadOnlyCollection<LangChain.DocumentLoaders.Document>?> QueryVectorDatabase(string query, RagState state)
         {
             string userIndexClusterId = state.Get<string>("userIndexClusterId");
-            var documents = await _vectorDatabase
-                .GetCollectionAsync(userIndexClusterId); // User's specific collection
-            var similarDocuments = (IReadOnlyCollection<LangChain.DocumentLoaders.Document>?) await documents.SearchAsync(_embeddingModel, query);
+            IReadOnlyCollection<LangChain.DocumentLoaders.Document>? similarDocuments = null;
+            if (!string.IsNullOrEmpty(userIndexClusterId))
+            {
+                var documents = await _vectorDatabase
+                    .GetCollectionAsync(userIndexClusterId); // User's specific collection
+                similarDocuments = (IReadOnlyCollection<LangChain.DocumentLoaders.Document>?) await documents.SearchAsync(_v3EmbeddingModel, query);
+                state.Add("similarDocuments", similarDocuments);
+            }
 
             // Store retrieved documents in state
-            state.Add("similarDocuments", similarDocuments);
-            return similarDocuments;
+            return similarDocuments ?? null;
         }
 
         private async Task<bool> GradeRelevance(string query, IReadOnlyCollection<LangChain.DocumentLoaders.Document>? similarDocuments)
         {
             var gradingPrompt = $"""
-            Determine if the following context is relevant to the user's question.
+            Determine if the following context is relevant to the user's query.
             Query: {query}
             Context: {similarDocuments.AsString()}
             Answer "yes" if relevant, otherwise "no":

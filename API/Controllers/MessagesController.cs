@@ -42,14 +42,14 @@ namespace API.Controllers
                 // await _llmService.RouteRequestAsync(sender, recipient, createMessageDTO.Content);
 
             }
-
             var message = new Message
             {
                 Sender = sender,
                 Recipient = recipient,
                 SenderUsername = sender.UserName,
                 RecipientUsername = recipient.UserName,
-                Content = createMessageDTO.Content
+                Content = createMessageDTO.Content,
+                IsAutoPilot = createMessageDTO.IsAutopilot
             };
 
             _unitOfWork.MessageRepository.AddMessage(message);

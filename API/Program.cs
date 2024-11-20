@@ -27,6 +27,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 builder.Services.Configure<ApplicationOptions>(builder.Configuration);
+builder.Services.Configure<LLMOptions>(builder.Configuration.GetSection("LLMOptions"));
 
 
 

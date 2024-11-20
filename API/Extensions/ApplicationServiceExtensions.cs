@@ -12,6 +12,9 @@ using API.Tasks;
 using API.Utils;
 using Microsoft.EntityFrameworkCore;
 using LangChain.Extensions.DependencyInjection;
+using LangChain.Providers.Ollama;
+using LangChain.Providers.Anthropic;
+using LangChain.Providers.OpenAI;
 
 namespace API.Extensions
 {
@@ -27,11 +30,19 @@ namespace API.Extensions
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPhotoService, PhotoService>();
+            
+          
+            services.Configure<BlobStorageOptions>(config.GetSection("AzureBlobStorage"));
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
+            services.AddScoped<OllamaProvider>();
+            // services.AddScoped<AnthropicProvider>();
+
+            ////open ai is being consumed from third-party API, so there's no need for a Provider, yet...
+            // services.AddScoped<OpenAiProvider>();
+
 
             services.AddScoped<ILLMService, LLMService>();
             services.AddScoped<IIngestionService, IngestionService>();
-            services.Configure<BlobStorageOptions>(config.GetSection("AzureBlobStorage"));
-            services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
